@@ -1,0 +1,1 @@
+"..\love2d-for-obs\geriosb-keyinput.exe" . --captflag
