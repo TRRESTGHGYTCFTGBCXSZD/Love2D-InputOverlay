@@ -7,6 +7,7 @@ function createobject(workspace,positionx,positiony,bodytype,shape,density)
 	local fixes = love.physics.newFixture(body,shape,density)
 	return {body,fixes}
 end
+function globaldown(key) return ffi.C.GetAsyncKeyState(key) end
 function love.load(wao)
 	frames = 0
 	frameticks = 0
@@ -22,6 +23,24 @@ function love.load(wao)
 	actioncolors["geriopink"] = {255/255,96/255,192/255,1}
 	actioncolors["white"] = {1,1,1,1}
 	actioncolors["gray"] = {.5,.5,.5,1}
+	-- for inputs, check https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+	-- as this uses virtual key code (and not love2d's key input system), it's advanced and hard one
+	actionkeys = {}
+	actionkeys.buttona = 0x5a
+	actionkeys.buttonb = 0x58
+	actionkeys.buttonc = 0x43
+	actionkeys.buttond = 0x56
+	actionkeys.buttone = 0x42
+	actionkeys.buttonf = 0x4e
+	actionkeys.buttong = 0x4d
+	actionkeys.buttonh = 0xbc
+	actionkeys.buttonspace = 0x20
+	actionkeys.start = 0x32
+	
+	actionkeys.joyleft = 0x25
+	actionkeys.joydown = 0x28
+	actionkeys.joyup = 0x26
+	actionkeys.joyright = 0x27
 	keyargaction = string.sub(wao[1],3,-1)
 	--print(keyargaction)
 	--print(string.len(keyargaction))
@@ -125,12 +144,12 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -140,12 +159,12 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x20),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.buttonspace),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -155,13 +174,13 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0)
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -171,13 +190,13 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x20),0x8000) ~= 0)
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttonspace),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -187,14 +206,14 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0)
-	DrawButton(192,64,bit32.band(ffi.C.GetAsyncKeyState(0x58),0x8000) ~= 0)
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0)
+	DrawButton(192,64,bit32.band(globaldown(actionkeys.buttonb),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -204,14 +223,14 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x20),0x8000) ~= 0)
-	DrawButton(192,64,bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0)
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttonspace),0x8000) ~= 0)
+	DrawButton(192,64,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -221,15 +240,34 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x25),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x28),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x26),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x27),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0)
-	DrawButton(192,64,bit32.band(ffi.C.GetAsyncKeyState(0x58),0x8000) ~= 0)
-	DrawButton(256,64,bit32.band(ffi.C.GetAsyncKeyState(0x43),0x8000) ~= 0)
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x32),0x8000) ~= 0)
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0)
+	DrawButton(192,64,bit32.band(globaldown(actionkeys.buttonb),0x8000) ~= 0)
+	DrawButton(256,64,bit32.band(globaldown(actionkeys.buttonc),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
+	DrawJoystick(0,0,joy1)
+end
+end
+if keyargaction == "4btn" then
+function love.update(dt)
+	frames = frames + (dt*60)
+	while frames > 1 do
+		frameticks = frameticks + 1
+		frames = frames - 1
+		UpdateJoystick(bit32.band(globaldown(actionkeys.joyleft),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joydown),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyup),0x8000) ~= 0,bit32.band(globaldown(actionkeys.joyright),0x8000) ~= 0,joy1)
+	end
+end
+function love.draw()
+	love.graphics.clear()
+	DrawButton(128,64,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0)
+	DrawButton(192,64,bit32.band(globaldown(actionkeys.buttonb),0x8000) ~= 0)
+	DrawButton(256,64,bit32.band(globaldown(actionkeys.buttonc),0x8000) ~= 0)
+	DrawButton(320,64,bit32.band(globaldown(actionkeys.buttond),0x8000) ~= 0)
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.start),0x8000) ~= 0)
 	DrawJoystick(0,0,joy1)
 end
 end
@@ -240,13 +278,13 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x41),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x53),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x57),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x44),0x8000) ~= 0,joy1)
-		UpdateJoystick(bit32.band(ffi.C.GetAsyncKeyState(0x4b),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x4c),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x4f),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0xba),0x8000) ~= 0,joy2)
+		UpdateJoystick(bit32.band(globaldown(0x41),0x8000) ~= 0,bit32.band(globaldown(0x53),0x8000) ~= 0,bit32.band(globaldown(0x57),0x8000) ~= 0,bit32.band(globaldown(0x44),0x8000) ~= 0,joy1)
+		UpdateJoystick(bit32.band(globaldown(0x4b),0x8000) ~= 0,bit32.band(globaldown(0x4c),0x8000) ~= 0,bit32.band(globaldown(0x4f),0x8000) ~= 0,bit32.band(globaldown(0xba),0x8000) ~= 0,joy2)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,0,bit32.band(ffi.C.GetAsyncKeyState(0x20),0x8000) ~= 0,1,1,0,nil,nil,{1,1,0,1})
+	DrawButton(128,0,bit32.band(globaldown(actionkeys.buttonspace),0x8000) ~= 0,1,1,0,nil,nil,{1,1,0,1})
 	DrawJoystick(0,0,joy1,1,1,0,nil,{248/255,0/255,0/255,1})
 	DrawJoystick(192,0,joy2,1,1,0,nil,{96/255,32/255,248/255,1})
 end
@@ -258,15 +296,15 @@ function love.update(dt)
 	while frames > 1 do
 		frameticks = frameticks + 1
 		frames = frames - 1
-		UpdateJoystick(false,bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x41),0x8000) ~= 0,false,joy1)
-		UpdateJoystick(false,bit32.band(ffi.C.GetAsyncKeyState(0x58),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x53),0x8000) ~= 0,false,joy2)
-		UpdateFlagger(bit32.band(ffi.C.GetAsyncKeyState(0x5a),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x41),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x58),0x8000) ~= 0,bit32.band(ffi.C.GetAsyncKeyState(0x53),0x8000) ~= 0,flago1)
+		UpdateJoystick(false,bit32.band(globaldown(actionkeys.buttona),0x8000) ~= 0,bit32.band(globaldown(0x41),0x8000) ~= 0,false,joy1)
+		UpdateJoystick(false,bit32.band(globaldown(actionkeys.buttonb),0x8000) ~= 0,bit32.band(globaldown(0x53),0x8000) ~= 0,false,joy2)
+		UpdateFlagger(bit32.band(globaldown(0x5a),0x8000) ~= 0,bit32.band(globaldown(0x41),0x8000) ~= 0,bit32.band(globaldown(0x58),0x8000) ~= 0,bit32.band(globaldown(0x53),0x8000) ~= 0,flago1)
 	end
 end
 function love.draw()
 	love.graphics.clear()
-	DrawButton(128,64,bit32.band(ffi.C.GetAsyncKeyState(0x51),0x8000) ~= 0,1,1,0,{.25,.25,.25,1},{.25,.25,.25,1},{0,.5,0,1},{0,1,0,1})
-	DrawButton(192,64,bit32.band(ffi.C.GetAsyncKeyState(0x57),0x8000) ~= 0,1,1,0,{.25,.25,.25,1},{.25,.25,.25,1},{.5,0,0,1},{1,0,0,1})
+	DrawButton(128,64,bit32.band(globaldown(0x51),0x8000) ~= 0,1,1,0,{.25,.25,.25,1},{.25,.25,.25,1},{0,.5,0,1},{0,1,0,1})
+	DrawButton(192,64,bit32.band(globaldown(0x57),0x8000) ~= 0,1,1,0,{.25,.25,.25,1},{.25,.25,.25,1},{.5,0,0,1},{1,0,0,1})
 	DrawJoystick(-32+256,0,joy1,1,1,0,nil,{1,0,0,1})
 	DrawJoystick(32+256,0,joy2,1,1,0,nil,{1,1,1,1})
 	DrawFlagger(0,0,flago1)
