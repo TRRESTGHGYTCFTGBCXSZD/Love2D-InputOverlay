@@ -12,12 +12,20 @@ whiteflags[0]=love.graphics.newImage("flagger_shiro_neutral.png")
 whiteflags[1]=love.graphics.newImage("flagger_shiro_age.png")
 whiteflags[2]=love.graphics.newImage("flagger_shiro_ue.png")
 whiteflags[3]=love.graphics.newImage("flagger_shiro_what.png")
+for _,roar in pairs(redflags) do
+	roar:setFilter("linear","linear",1)
+end
+for _,roar in pairs(whiteflags) do
+	roar:setFilter("linear","linear",1)
+end
 local fakeo = {}
 fakeo["normal"]=love.graphics.newImage("action_norma.png")
 fakeo["ue"]=love.graphics.newImage("action_flaggerup.png")
 fakeo["shita"]=love.graphics.newImage("action_flaggerdown.png")
 fakeo["ogami"]=love.graphics.newImage("action_flaggerhigh.png")
 fakeo["what"]=love.graphics.newImage("action_screa.png")
+local drawo = love.graphics.newCanvas(128,128)
+drawo:setFilter("linear","linear",1)
 function UpdateMe(reddown,redup,whitedown,whiteup,animationstore)
 	animationstore.reddown = reddown
 	animationstore.redup = redup
@@ -70,30 +78,42 @@ function DrawMe(x,y,animationstore,sizex,sizey,rotation)
 	end
 	local tempcolorr,tempcolorg,tempcolorb,tempcolora = love.graphics.getColor()
 	love.graphics.push()
+	love.graphics.scale(sizex,sizey)
 	love.graphics.rotate(rotation)
-	love.graphics.translate(x,y)
+	love.graphics.translate(x/sizex,y/sizey)
 	love.graphics.setColor(1,1,1,1)
-	love.graphics.draw(redflags[animationstore.redstate], 0, 0,0,sizex,sizey)
-	love.graphics.draw(whiteflags[animationstore.whitestate], 128, 0,0,-sizex,sizey)
+	local notdrawo = love.graphics.getCanvas()
+	love.graphics.setCanvas(drawo)
+	love.graphics.push()
+	love.graphics.origin()
+	love.graphics.clear(0,0,0,0)
+	love.graphics.draw(redflags[animationstore.redstate], 0, 0)
+	love.graphics.draw(whiteflags[animationstore.whitestate], 128, 0,0,-1,1)
+	love.graphics.pop()
+	love.graphics.setCanvas(notdrawo)
+	local mon,monn = love.graphics.getBlendMode()
+	love.graphics.setBlendMode("alpha", "premultiplied")
+	love.graphics.draw(drawo, 0, 0)
+	love.graphics.setBlendMode(mon,monn)
 	if (animationstore.reddown and animationstore.redup) or (animationstore.whitedown and animationstore.whiteup) then
-		love.graphics.draw(fakeo["what"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["what"], 48, 31)
 	elseif animationstore.redup and animationstore.whiteup then
-		love.graphics.draw(fakeo["ogami"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["ogami"], 48, 31)
 	elseif (animationstore.reddown and animationstore.whitedown) or (animationstore.redup and animationstore.whitedown) or (animationstore.reddown and animationstore.whiteup) then
-		love.graphics.draw(fakeo["normal"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["normal"], 48, 31)
 	elseif animationstore.redup then
-		love.graphics.draw(fakeo["ue"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["ue"], 48, 31)
 	elseif animationstore.reddown then
-		love.graphics.draw(fakeo["shita"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["shita"], 48, 31)
 	elseif animationstore.whiteup then
-		love.graphics.draw(fakeo["ue"], 80, 31,0,-sizex,sizey)
+		love.graphics.draw(fakeo["ue"], 80, 31,0,-1,1)
 	elseif animationstore.whitedown then
-		love.graphics.draw(fakeo["shita"], 80, 31,0,-sizex,sizey)
+		love.graphics.draw(fakeo["shita"], 80, 31,0,-1,1)
 	else
-		love.graphics.draw(fakeo["normal"], 48, 31,0,sizex,sizey)
+		love.graphics.draw(fakeo["normal"], 48, 31)
 	end
 	love.graphics.pop()
 	love.graphics.setColor(tempcolorr,tempcolorg,tempcolorb,tempcolora)
 end
-
-return {UpdateMe,DrawMe}
+local AnimationStoreLMAO = {["reddown"]=false,["redup"]=false,["whitedown"]=false,["whiteup"]=false,["redstate"]=0,["whitestate"]=0,}
+return {UpdateMe,DrawMe,AnimationStoreLMAO}
